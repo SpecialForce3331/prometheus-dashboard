@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <title>Dashboard</title>
+    <body>
+      <div id="app">
+        <v-app id="inspire">
+          <v-container>
+            <v-row>
+              <v-btn-toggle
+                v-model="toggle_multiple"
+                dense
+                multiple
+                >
+                <v-col cols="12" sm="4">
+                  <v-btn>
+                    Critical
+                    <v-badge 
+                      inline
+                      right
+                      v-if="critical_hidden"
+                      color="red"
+                      :content="count_critical"
+                      >
+                    </v-badge>
+                  </v-btn>  
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <v-btn>
+                    Warning
+                    <v-badge
+                      inline
+                      right
+                      v-if="warning_hidden"
+                      color="orange"
+                      :content="count_warning"
+                      >
+                    </v-badge>
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <v-btn>
+                    Info
+                    <v-badge
+                      inline
+                      right
+                      v-if="info_hidden"
+                      color="green"
+                      :content="count_info"
+                      >
+                    </v-badge>
+                  </v-btn>
+                </v-col>
+              </v-btn-toggle>
+            </v-row>
+            <v-row>
+              <v-data-table
+                :headers="headers"
+                :items="f_logs"
+                :items-per-page="5"
+                class="elevation-1"
+                >
+              </v-data-table>
+            </v-row>
+          </v-container>
+        </v-app>
+      </div>
+    </body>
+  </head> 
+  <script src="source.js"></script>
+</html>

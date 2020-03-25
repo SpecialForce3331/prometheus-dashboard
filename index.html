@@ -30,7 +30,7 @@
                       :content="count_critical"
                       >
                     </v-badge>
-                  </v-btn>  
+                  </v-btn>
                 </v-col>
                 <v-col cols="12" sm="4">
                   <v-btn>
@@ -58,12 +58,24 @@
                     </v-badge>
                   </v-btn>
                 </v-col>
+                <v-col cols="12" sm="4">
+                  <v-btn>
+                    pending alerts
+                    <v-badge 
+                      inline
+                      right
+                      v-if="critical_hidden"
+                      color="blue"
+                      :content="count_critical"
+                      >
+                    </v-badge>
+                  </v-btn>
+                </v-col>
               </v-btn-toggle>
             </v-row>
-            <v-row>
               <v-data-table
                 :headers="headers"
-                :items="f_logs"
+                :items="alerts"
                 :items-per-page="5"
                 class="elevation-1"
                 >

@@ -4,117 +4,18 @@ let my_vue = new Vue ({
   data: {
     severity: ["info", "warning", "critical"],
     //Сюда будут прилетать алерты
-    json_raw: `{
-            "status": "success",
-            "data": {
-              "alerts": [
-                {
-                  "labels": {
-                    "alertname": "KAVAgentServiceUnavailable",
-                    "instance": "mbe.akvnzm.ru:9182",
-                    "job": "wmi_exporters",
-                    "name": "klnagent",
-                    "severity": "info",
-                    "state": "running"
-                  },
-                  "annotations": {
-                    "summay": "Endpoint mbe.akvnzm.ru:9182 has not working KAVAgent service!"
-                  },
-                  "state": "pending",
-                  "activeAt": "2020-03-19T17:46:12.045370358Z",
-                  "value": "0e+00"
-                },
-                {
-                  "labels": {
-                    "alertname": "KAVAgentServiceCritical",
-                    "instance": "mbe.akvnzm.ru:9182",
-                    "job": "wmi_exporters",
-                    "name": "klnagent",
-                    "severity": "warning",
-                    "state": "running"
-                  },
-                  "annotations": {
-                    "summay": "Endpoint mbe.akvnzm.ru:9182 has not working KAVAgent service!"
-                  },
-                  "state": "pending",
-                  "activeAt": "2020-03-19T17:46:13.780286546Z",
-                  "value": "0e+00"
-                },
-                {
-                  "labels": {
-                    "alertname": "KAVAgentServiceInfo",
-                    "instance": "mbe.akvnzm.ru:9182",
-                    "job": "wmi_exporters",
-                    "name": "klnagent",
-                    "severity": "critical",
-                    "state": "running"
-                  },
-                  "annotations": {
-                    "summay": "Endpoint mbe.akvnzm.ru:9182 has not working KAVAgent service!"
-                  },
-                  "state": "pending",
-                  "activeAt": "2020-03-19T17:46:18.418808565Z",
-                  "value": "0e+00"
-                },
-                {
-                  "labels": {
-                    "alertname": "KAVAgentServiceInfo",
-                    "instance": "mbe.akvnzm.ru:9182",
-                    "job": "wmi_exporters",
-                    "name": "klnagent",
-                    "severity": "warning",
-                    "state": "running"
-                  },
-                  "annotations": {
-                    "summay": "Endpoint mbe.akvnzm.ru:9182 has not working KAVAgent service!"
-                  },
-                  "state": "pending",
-                  "activeAt": "2020-03-19T17:46:18.418808565Z",
-                  "value": "0e+00"
-                },
-                {
-                  "labels": {
-                    "alertname": "KAVAgentServiceInfo",
-                    "instance": "mbe.akvnzm.ru:9182",
-                    "job": "wmi_exporters",
-                    "name": "klnagent",
-                    "severity": "critical",
-                    "state": "running"
-                  },
-                  "annotations": {
-                    "summay": "Endpoint mbe.akvnzm.ru:9182 has not working KAVAgent service!"
-                  },
-                  "state": "pending",
-                  "activeAt": "2020-03-19T17:46:18.418808565Z",
-                  "value": "0e+00"
-                },
-                {
-                  "labels": {
-                    "alertname": "KAVAgentServiceInfo",
-                    "instance": "mbe.akvnzm.ru:9182",
-                    "job": "wmi_exporters",
-                    "name": "klnagent",
-                    "severity": "critical",
-                    "state": "running"
-                  },
-                  "annotations": {
-                    "summay": "Endpoint mbe.akvnzm.ru:9182 has not working KAVAgent service!"
-                  },
-                  "state": "pending",
-                  "activeAt": "2020-03-19T17:46:18.418808565Z",
-                  "value": "0e+00"
-                }
-              ]
-            }
-          }`,
-    logs: [],
-    f_logs: [],
+    return: {
+    json_raw: null,
+    toggle_multiple: [0, 1, 2],
+    },
+    alerts: [],
+    currentDate: 0,
     headers: [
       {
-        text: 'date',
+        text: 'time',
         align: 'start',
         sortable: true,
-        value: 'date',
+        value: "currentDate",
       },
       { text: 'severity', value: 'labels.severity' },
       { text: 'alertname', value: 'labels.alertname' },
@@ -125,21 +26,42 @@ let my_vue = new Vue ({
   },
 
   created: function() {       //здесь они будут конвертироваться
-    this.logs = JSON.parse(this.json_raw);
-    for(item of this.logs.data.alerts) {
-      this.f_logs.push(item);
-    }
+    axios 
+      .get('http://au_prm.akvnzm.ru:9090/api/v1/alerts')
+      .then(response => this.json_raw = response)
+      .then(response => console.log(this.json_raw))
+      .then(response => this.alerts = this.json_raw.data.data.alerts)
+      .then(response => console.log(this.alerts))
   },
+
+  //   convertMS: function( milliseconds ) {
+  //     var day, hour, minute, seconds;
+  //     seconds = Math.floor(milliseconds / 1000);
+  //     minute = Math.floor(seconds / 60);
+  //     seconds = seconds % 60;
+  //     hour = Math.floor(minute / 60);
+  //     minute = minute % 60;
+  //     day = Math.floor(hour / 24);
+  //     hour = hour % 24;
+  //     return {
+  //         day: day,
+  //         hour: hour,
+  //         minute: minute,
+  //         seconds: seconds
+  //     }
+  //   },
+
+  // },
 
   computed:{
     count_info: function() {
-      return this.f_logs.filter(item=>item.labels.severity=="info").length;
+      return this.alerts.filter(item=>item.labels.severity=="info").length;
     },
     count_warning: function() {
-      return this.f_logs.filter(item=>item.labels.severity=="warning").length;
+      return this.alerts.filter(item=>item.labels.severity=="warning").length;
     },
     count_critical: function() {
-      return this.f_logs.filter(item=>item.labels.severity=="critical").length;
+      return this.alerts.filter(item=>item.labels.severity=="critical").length;
     },
     info_hidden: function() {
       return (Number(this.count_info) > 0) ? true : false;
@@ -152,3 +74,5 @@ let my_vue = new Vue ({
     },
   },
 })
+
+// setInterval(my_vue.updateTime, 1000);

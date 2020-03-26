@@ -64,23 +64,30 @@
                     <v-badge 
                       inline
                       right
-                      v-if="critical_hidden"
+                      v-if="pending_hidden"
                       color="blue"
-                      :content="count_critical"
+                      :content="count_pending"
                       >
                     </v-badge>
                   </v-btn>
                 </v-col>
               </v-btn-toggle>
             </v-row>
-              <v-data-table
-                :headers="headers"
-                :items="alerts"
-                :items-per-page="5"
-                class="elevation-1"
-                >
-              </v-data-table>
-            </v-row>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Search"
+              single-line
+              hide-details
+            ></v-text-field>
+            <v-data-table
+              :headers="headers"
+              :items="alerts"
+              :items-per-page="10"
+              class="elevation-1"
+              :search="search"
+              >
+            </v-data-table>
           </v-container>
         </v-app>
       </div>

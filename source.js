@@ -4,10 +4,9 @@ let my_vue = new Vue ({
   data: {
     severity: ["info", "warning", "critical"],
     //Сюда будут прилетать алерты
-    return: {
     json_raw: null,
-    toggle_multiple: [0, 1, 2],
-    },
+    toggle_multiple: [],
+    search: "",
     alerts: [],
     currentDate: 0,
     headers: [
@@ -21,13 +20,14 @@ let my_vue = new Vue ({
       { text: 'alertname', value: 'labels.alertname' },
       { text: 'instance', value: 'labels.instance' },
       { text: 'activeAt', value: 'activeAt' },
-      { text: 'summary', value: 'annotations.summay' },
+      { text: 'summary', value: 'annotations.summary' },
     ],
   },
 
   created: function() {       //здесь они будут конвертироваться
     axios 
       .get('http://au_prm.akvnzm.ru:9090/api/v1/alerts')
+      // .get('/alerts.json')
       .then(response => this.json_raw = response)
       .then(response => console.log(this.json_raw))
       .then(response => this.alerts = this.json_raw.data.data.alerts)
@@ -55,13 +55,16 @@ let my_vue = new Vue ({
 
   computed:{
     count_info: function() {
-      return this.alerts.filter(item=>item.labels.severity=="info").length;
+      return this.alerts.filter(item => item.labels.severity === "info").length;
     },
     count_warning: function() {
-      return this.alerts.filter(item=>item.labels.severity=="warning").length;
+      return this.alerts.filter(item => item.labels.severity === "warning").length;
     },
     count_critical: function() {
-      return this.alerts.filter(item=>item.labels.severity=="critical").length;
+      return this.alerts.filter(item => item.labels.severity === "critical").length;
+    },
+    count_pending: function() {
+      return this.alerts.filter(item => item.state === "pending").length;
     },
     info_hidden: function() {
       return (Number(this.count_info) > 0) ? true : false;
@@ -71,6 +74,9 @@ let my_vue = new Vue ({
     },
     critical_hidden: function() {
       return (Number(this.count_critical) > 0) ? true : false;
+    },
+    pending_hidden: function() {
+      return (Number(this.count_pending) > 0) ? true : false;
     },
   },
 })
